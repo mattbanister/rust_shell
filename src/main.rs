@@ -1,25 +1,23 @@
 use std::io::stdin;
 use termion::event::Key;
 use termion::input::TermRead;
-use termion::raw::IntoRawMode;
-use std::io::{Write, stdout};
+
+
+mod shell;
 
 fn main() {
     let stdin = stdin();
-    let mut stdout = stdout().into_raw_mode().unwrap();
+    let mut sh = shell::Shell::new();
     for c in stdin.keys() {
         match c.unwrap() {
             Key::Char('\n') => {
-                writeln!(stdout, "New line entered\r").unwrap();
-                stdout.flush().unwrap();
+                sh.handle_newline();
             },
             Key::Char(c)    => {
-                writeln!(stdout, "char {} entered\r", c).unwrap();
-                stdout.flush().unwrap();
+                sh.handle_char(c);
             },
             Key::Backspace => {
-                writeln!(stdout, "backspace entered\r").unwrap();
-                stdout.flush().unwrap();
+                sh.handle_backspace();
             },
             Key::Ctrl('c')  => break,
             _               => (),
